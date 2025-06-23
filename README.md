@@ -15,14 +15,14 @@ Adicione a dependência ao seu projeto Maven:
 <dependency>
   <groupId>tech.techsete</groupId>
   <artifactId>pushin-pay-sdk</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.1</version>
 </dependency>
 ```
 
 Ou com Gradle:
 
 ```groovy
-implementation 'tech.techsete:pushin-pay-sdk:1.0.0'
+implementation 'tech.techsete:pushin-pay-sdk:1.0.1'
 ```
 
 ---
