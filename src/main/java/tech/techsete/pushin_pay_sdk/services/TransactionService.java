@@ -3,6 +3,7 @@ package tech.techsete.pushin_pay_sdk.services;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 import tech.techsete.pushin_pay_sdk.dtos.response.TransactionResponse;
 
 import java.util.Map;
@@ -78,5 +79,32 @@ public class TransactionService {
                 .retrieve()
                 .bodyToMono(TransactionResponse.class)
                 .block();
+    }
+
+    /**
+     * Recupera de forma assíncrona os detalhes de uma transação com base no ID fornecido.
+     * <p>
+     * Este método envia uma requisição HTTP GET para o endpoint <code>/api/transactions/{transactionId}</code>
+     * da API Pushin Pay, utilizando os cabeçalhos informados. A resposta é processada de forma reativa e
+     * não bloqueia a thread de execução.
+     * </p>
+     *
+     * <p>
+     * É indicado para uso em fluxos reativos ou quando se deseja melhor escalabilidade e desempenho em aplicações
+     * que utilizam WebFlux.
+     * </p>
+     *
+     * @param headers       mapa contendo os cabeçalhos HTTP a serem incluídos na requisição,
+     *                      como o token de autenticação
+     * @param transactionId identificador único da transação a ser consultada
+     * @return {@link Mono} que emitirá uma instância de {@link TransactionResponse} com os dados da transação
+     */
+    public Mono<TransactionResponse> retrieveByTransactionIdAsync(Map<String, ?> headers, String transactionId) {
+
+        return webClient.get()
+                .uri("/api/transactions/" + transactionId)
+                .headers(httpHeaders -> headers.forEach((key, value) -> httpHeaders.add(key, value.toString())))
+                .retrieve()
+                .bodyToMono(TransactionResponse.class);
     }
 }

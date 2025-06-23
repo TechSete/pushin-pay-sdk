@@ -3,6 +3,7 @@ package tech.techsete.pushin_pay_sdk.services;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 import tech.techsete.pushin_pay_sdk.dtos.request.ChargeRequest;
 import tech.techsete.pushin_pay_sdk.dtos.response.ChargeResponse;
 import tech.techsete.pushin_pay_sdk.exceptions.InvalidChargeRequestException;
@@ -78,8 +79,8 @@ public class ChargeService {
      *
      * @param accountService serviço responsável por verificar a existência de contas
      *                       utilizadas nas regras de divisão da cobrança
-     * @param webClient cliente HTTP reativo configurado com a base da API Pushin Pay,
-     *                  utilizado para envio das requisições
+     * @param webClient      cliente HTTP reativo configurado com a base da API Pushin Pay,
+     *                       utilizado para envio das requisições
      */
     public ChargeService(@Qualifier("pushinPaySDKAccountService") AccountService accountService,
                          @Qualifier("pushinPayWebClient") WebClient webClient
@@ -112,7 +113,7 @@ public class ChargeService {
      *     <li>Garante que a soma das regras de divisão não ultrapasse o valor total</li>
      * </ul>
      *
-     * @param headers mapa de cabeçalhos HTTP, incluindo tokens de autenticação
+     * @param headers       mapa de cabeçalhos HTTP, incluindo tokens de autenticação
      * @param chargeRequest objeto com os detalhes da cobrança (valor, webhook, split rules)
      * @return instância de {@link ChargeResponse} com os dados da cobrança criada
      * @throws InvalidChargeRequestException caso algum dado seja inválido ou inconsistente
@@ -128,6 +129,40 @@ public class ChargeService {
                 .retrieve()
                 .bodyToMono(ChargeResponse.class)
                 .block();
+    }
+
+    /**
+     * Cria uma cobrança de forma assíncrona na API Pushin Pay.
+     * <p>
+     * Este método envia uma requisição HTTP POST para o endpoint <code>/api/pix/cashIn</code>,
+     * utilizando os dados fornecidos no {@link ChargeRequest}, sem bloquear a thread de execução.
+     * </p>
+     *
+     * <p>
+     * As mesmas validações feitas no método {@link #create(Map, ChargeRequest)} são aplicadas aqui,
+     * incluindo validação de valor, webhook, regras de divisão e existência das contas via {@link AccountService}.
+     * </p>
+     *
+     * <p>
+     * Este método é recomendado em fluxos reativos e ambientes não-bloqueantes, como aplicações
+     * que utilizam WebFlux ou comunicação com alto volume de requisições simultâneas.
+     * </p>
+     *
+     * @param headers       mapa de cabeçalhos HTTP, geralmente incluindo o token de autenticação
+     * @param chargeRequest objeto com os dados da cobrança (valor, URL de webhook, regras de divisão)
+     * @return {@link Mono} que emitirá uma instância de {@link ChargeResponse} com os dados da cobrança criada
+     * @throws InvalidChargeRequestException caso algum dado seja inválido ou inconsistente
+     */
+    public Mono<ChargeResponse> createAsync(Map<String, ?> headers, ChargeRequest chargeRequest) {
+
+        validate(headers, chargeRequest);
+
+        return webClient.post()
+                .uri("/api/pix/cashIn")
+                .headers(httpHeaders -> headers.forEach((key, value) -> httpHeaders.add(key, value.toString())))
+                .bodyValue(chargeRequest)
+                .retrieve()
+                .bodyToMono(ChargeResponse.class);
     }
 
     /**
@@ -154,7 +189,7 @@ public class ChargeService {
      *     <li>A soma dos valores das regras de divisão não pode exceder o valor da cobrança</li>
      * </ul>
      *
-     * @param headers mapa de cabeçalhos HTTP utilizados para autenticar a requisição à API
+     * @param headers       mapa de cabeçalhos HTTP utilizados para autenticar a requisição à API
      * @param chargeRequest objeto com os dados da cobrança
      * @throws InvalidChargeRequestException se qualquer validação falhar
      */

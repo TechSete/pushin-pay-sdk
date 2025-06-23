@@ -80,8 +80,7 @@ public class AccountService {
      *
      * @param headers   mapa de cabeçalhos HTTP a serem incluídos na requisição,
      *                  geralmente contendo o token de autenticação
-     * @param accountId identificador único da conta a ser verificada, geralmente
-     *                  no formato "acc_" seguido por uma sequência alfanumérica
+     * @param accountId identificador único da conta a ser verificada
      * @return true se a conta existe, false caso contrário
      * @throws RuntimeException se ocorrer um erro de comunicação com a API ou
      *                          se a API retornar um código de status não esperado
@@ -92,6 +91,31 @@ public class AccountService {
                 .headers(httpHeaders -> headers.forEach((key, value) -> httpHeaders.add(key, value.toString())))
                 .exchangeToMono(this::handleResponse)
                 .block());
+    }
+
+    /**
+     * Verifica de forma assíncrona se uma conta existe na plataforma Pushin Pay pelo seu ID.
+     * <p>
+     * Este método realiza uma chamada GET para o endpoint de verificação de contas da API Pushin Pay,
+     * passando os cabeçalhos HTTP necessários e o ID da conta a ser verificada. A resposta é processada
+     * de forma reativa, retornando um {@link Mono} que emitirá o resultado assim que a resposta da API for recebida.
+     * </p>
+     * <p>
+     * Diferente do método {@link #existsByAccountId(Map, String)}, este método não realiza o bloqueio da thread
+     * e é ideal para uso em fluxos reativos ou em controladores com suporte a WebFlux.
+     * </p>
+     *
+     * @param headers   mapa de cabeçalhos HTTP a serem incluídos na requisição,
+     *                  geralmente contendo o token de autenticação
+     * @param accountId identificador único da conta a ser verificada
+     * @return {@link Mono} contendo <code>true</code> se a conta existe, <code>false</code> caso contrário.
+     *         O Mono emitirá erro caso a API retorne um status inesperado.
+     */
+    public Mono<Boolean> existsByAccountIdAsync(Map<String, ?> headers, String accountId) {
+        return webClient.get()
+                .uri("/api/accounts/check/" + accountId)
+                .headers(httpHeaders -> headers.forEach((key, value) -> httpHeaders.add(key, value.toString())))
+                .exchangeToMono(this::handleResponse);
     }
 
     /**
