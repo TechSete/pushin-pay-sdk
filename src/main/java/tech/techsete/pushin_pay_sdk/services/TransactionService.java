@@ -30,9 +30,8 @@ import java.util.Map;
  * TransactionResponse response = transactionService.retrieveByTransactionId(headers, transactionId);
  * </pre>
  *
- * @see tech.techsete.pushin_pay_sdk.dtos.response.TransactionResponse
- *
  * @author EdsonIsaac
+ * @see tech.techsete.pushin_pay_sdk.dtos.response.TransactionResponse
  */
 @Service(value = "pushinPaySDKTransactionService")
 public class TransactionService {
@@ -48,9 +47,8 @@ public class TransactionService {
      *
      * @param webClient O WebClient pré-configurado para comunicação com a API Pushin Pay
      */
-    public TransactionService(
-            @Qualifier("pushinPayWebClient")
-            WebClient webClient
+    public TransactionService(@Qualifier("pushinPayWebClient")
+                              WebClient webClient
     ) {
         this.webClient = webClient;
     }

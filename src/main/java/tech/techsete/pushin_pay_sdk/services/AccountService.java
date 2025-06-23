@@ -32,11 +32,10 @@ import java.util.Map;
  * boolean exists = accountService.existsByAccountId(headers, "acc_123456789");
  * </pre>
  *
+ * @author EdsonIsaac
  * @see org.springframework.stereotype.Service
  * @see org.springframework.web.reactive.function.client.WebClient
  * @see reactor.core.publisher.Mono
- *
- * @author EdsonIsaac
  */
 @Service(value = "pushinPaySDKAccountService")
 public class AccountService {
@@ -59,11 +58,10 @@ public class AccountService {
      * </p>
      *
      * @param webClient cliente HTTP reativo configurado para a API Pushin Pay,
-     *                 identificado pelo qualificador "pushinPayWebClient"
+     *                  identificado pelo qualificador "pushinPayWebClient"
      */
-    public AccountService(
-            @Qualifier("pushinPayWebClient")
-            WebClient webClient
+    public AccountService(@Qualifier("pushinPayWebClient")
+                          WebClient webClient
     ) {
         this.webClient = webClient;
     }
@@ -80,13 +78,13 @@ public class AccountService {
      * que o método aguardará a resposta da API antes de retornar.
      * </p>
      *
-     * @param headers mapa de cabeçalhos HTTP a serem incluídos na requisição,
-     *               geralmente contendo o token de autenticação
+     * @param headers   mapa de cabeçalhos HTTP a serem incluídos na requisição,
+     *                  geralmente contendo o token de autenticação
      * @param accountId identificador único da conta a ser verificada, geralmente
-     *                 no formato "acc_" seguido por uma sequência alfanumérica
+     *                  no formato "acc_" seguido por uma sequência alfanumérica
      * @return true se a conta existe, false caso contrário
      * @throws RuntimeException se ocorrer um erro de comunicação com a API ou
-     *                        se a API retornar um código de status não esperado
+     *                          se a API retornar um código de status não esperado
      */
     public boolean existsByAccountId(Map<String, ?> headers, String accountId) {
         return Boolean.TRUE.equals(webClient.get()
