@@ -52,7 +52,17 @@ public enum ChargeStatus {
      * (ou distribuído conforme as regras de divisão, se aplicável).
      * </p>
      */
-    PAID;
+    PAID,
+
+    /**
+     * Cobrança criada e pendente de pagamento.
+     * <p>
+     * Este status indica que a cobrança foi registrada com sucesso na API Pushin Pay
+     * e está aguardando o pagamento pelo cliente. Neste estado, o QR code Pix
+     * está ativo e pode ser utilizado para efetuar o pagamento.
+     * </p>
+     */
+    PENDING;
 
     /**
      * Converte uma string em um valor do enum ChargeStatus.
