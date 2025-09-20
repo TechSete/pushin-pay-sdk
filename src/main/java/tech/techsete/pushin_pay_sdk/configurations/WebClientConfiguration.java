@@ -29,7 +29,7 @@ import reactor.core.publisher.Mono;
  */
 
 @Slf4j
-@Configuration
+@Configuration("PushinPayWebClientConfiguration")
 public class WebClientConfiguration {
 
     /**
