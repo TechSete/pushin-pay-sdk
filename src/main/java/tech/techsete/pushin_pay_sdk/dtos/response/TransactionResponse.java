@@ -143,6 +143,12 @@ public record TransactionResponse(
         @JsonProperty("split_rules")
         Collection<SplitRuleResponse> splitRules,
 
+        @JsonProperty("fee")
+        Long fee,
+
+        @JsonProperty("total")
+        Long total,
+
         /**
          * Identificador fim a fim da transação Pix.
          * <p>
@@ -185,7 +191,7 @@ public record TransactionResponse(
          */
         @JsonProperty("webhook")
         @JsonDeserialize(using = WebhookResponseDeserializer.class)
-        WebhookResponse webhook,
+        Collection<WebhookResponse> webhook,
 
         /**
          * Detalhes específicos para transações Pix.

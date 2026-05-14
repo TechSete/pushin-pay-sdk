@@ -114,5 +114,14 @@ public record SplitRuleResponse(
          * </p>
          */
         @JsonProperty("updated_at")
-        OffsetDateTime updatedAt
+        OffsetDateTime updatedAt,
+
+        /**
+         * Indicador retornado pela API para classificar a regra no contexto de BaaS.
+         * <p>
+         * A API pode retornar este valor como string numerica, por exemplo "0".
+         * </p>
+         */
+        @JsonProperty("baas")
+        String baas
 ) implements Serializable { }

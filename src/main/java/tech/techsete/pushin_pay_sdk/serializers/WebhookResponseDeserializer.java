@@ -7,11 +7,14 @@ import com.fasterxml.jackson.databind.JsonNode;
 import tech.techsete.pushin_pay_sdk.dtos.response.WebhookResponse;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
-public class WebhookResponseDeserializer extends JsonDeserializer<WebhookResponse> {
+public class WebhookResponseDeserializer extends JsonDeserializer<Collection<WebhookResponse>> {
 
     @Override
-    public WebhookResponse deserialize(JsonParser parser, DeserializationContext context) throws IOException {
+    public Collection<WebhookResponse> deserialize(JsonParser parser, DeserializationContext context) throws IOException {
         JsonNode node = parser.getCodec().readTree(parser);
 
         if (node == null || node.isNull() || node.isMissingNode()) {
@@ -20,21 +23,23 @@ public class WebhookResponseDeserializer extends JsonDeserializer<WebhookRespons
 
         if (node.isArray()) {
             if (node.isEmpty()) {
-                return null;
+                return List.of();
             }
 
-            JsonNode firstWebhook = node.get(0);
-            if (firstWebhook == null || firstWebhook.isNull()) {
-                return null;
+            Collection<WebhookResponse> webhooks = new ArrayList<>();
+            for (JsonNode webhookNode : node) {
+                if (webhookNode != null && !webhookNode.isNull()) {
+                    webhooks.add(parser.getCodec().treeToValue(webhookNode, WebhookResponse.class));
+                }
             }
 
-            return parser.getCodec().treeToValue(firstWebhook, WebhookResponse.class);
+            return webhooks;
         }
 
         if (node.isObject()) {
-            return parser.getCodec().treeToValue(node, WebhookResponse.class);
+            return List.of(parser.getCodec().treeToValue(node, WebhookResponse.class));
         }
 
-        return null;
+        return List.of();
     }
 }
