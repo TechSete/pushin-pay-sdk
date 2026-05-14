@@ -1,7 +1,9 @@
 package tech.techsete.pushin_pay_sdk.dtos.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import tech.techsete.pushin_pay_sdk.enums.TransactionStatus;
+import tech.techsete.pushin_pay_sdk.serializers.WebhookResponseDeserializer;
 
 import java.io.Serializable;
 import java.time.OffsetDateTime;
@@ -182,6 +184,7 @@ public record TransactionResponse(
          * </p>
          */
         @JsonProperty("webhook")
+        @JsonDeserialize(using = WebhookResponseDeserializer.class)
         WebhookResponse webhook,
 
         /**
